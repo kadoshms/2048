@@ -10,6 +10,9 @@
 requirejs.config({
     paths: {
         'jquery'			:	'vendor/jquery/dist/jquery.min',
+        'mustache'          :   'vendor/mustache.js/mustache',
+        'text'              :   'vendor/requirejs-plugins/lib/text'
+
     },
     shim: {}
 });
