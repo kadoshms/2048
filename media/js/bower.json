@@ -1,0 +1,22 @@
+{
+  "name": "2048",
+  "homepage": "https://github.com/kadoshms/2048",
+  "authors": [
+    "kadoshms <kadoshms@gmail.com>"
+  ],
+  "description": "My version to the 2048 game",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "requirejs": "^2.2.0",
+    "requirejs-plugins": "^1.0.3"
+  }
+}
