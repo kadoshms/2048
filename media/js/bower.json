@@ -17,6 +17,8 @@
   ],
   "dependencies": {
     "requirejs": "^2.2.0",
-    "requirejs-plugins": "^1.0.3"
+    "requirejs-plugins": "^1.0.3",
+    "mustache.js": "mustache#^2.2.1",
+    "jquery": "^2.2.3"
   }
 }
