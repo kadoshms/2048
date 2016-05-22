@@ -4,13 +4,7 @@
 
 define([], function(){
 
-    /**
-     * construct a new instace of utils
-     * @constructor
-     */
-    function Utils(){
-
-    }
+    var Utils = {};
 
     /**
      * get a random number in range
@@ -18,10 +12,27 @@ define([], function(){
      * @param max
      * @returns {number}
      */
-    Utils.prototype.getRandomInRange = function(min, max){
+    Utils.getRandomInRange = function(min, max){
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    return new Utils;
+    /**
+     * print matrix
+     * @param matrix
+     */
+    Utils.printMatrix = function(matrix){
+        for(var i=0;i<matrix.length;i++){
+            var row = "";
+            for(var j=0;j<matrix[0].length;j++){
+                row = row + matrix[i][j];
+
+                if(j != matrix[0].length - 1)
+                    row = row + ",";
+            }
+            console.log("("+i+") "+row);
+        }
+        console.log("");
+    }
+    return Utils;
 
 });

@@ -14,6 +14,9 @@ define([], function(){
     consts.LEFT = 37;
     consts.UP = 38;
     consts.DOWN = 40;
+
+    // grid consts
+    consts.DIM = 4;
     
     return consts;
     
