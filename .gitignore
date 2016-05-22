@@ -1,2 +1,4 @@
 media/.sass-cache/
 .idea
+media/stylesheets/*
+media/js/vendor
