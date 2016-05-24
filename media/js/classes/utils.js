@@ -2,7 +2,9 @@
  * Created by mor on 19/05/16.
  */
 
-define([], function(){
+define([
+    'classes/consts',
+], function(consts){
 
     var Utils = {};
 
@@ -32,6 +34,22 @@ define([], function(){
             console.log("("+i+") "+row);
         }
         console.log("");
+    }
+
+    /**
+     * get exclipict name of direction
+     * @param dir
+     * @returns {*}
+     */
+    Utils.getDirName = function(dir){
+        if(dir == consts.RIGHT)
+            return "right";
+        else if(dir == consts.LEFT)
+            return "left";
+        else if(dir == consts.UP)
+            return "up";
+        else if(dir == consts.DOWN)
+            return "down";
     }
     return Utils;
 
