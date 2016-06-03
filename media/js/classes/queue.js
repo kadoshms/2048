@@ -28,6 +28,14 @@ define([], function(){
     }
 
     /**
+     * get queue size
+     * @returns {Number}
+     */
+    Queue.prototype.size = function(){
+        return this.arr.length;
+    }
+
+    /**
      * dequeue item from queue
      * @returns {*}
      */
