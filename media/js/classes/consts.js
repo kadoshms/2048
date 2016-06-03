@@ -17,6 +17,8 @@ define([], function(){
 
     // grid consts
     consts.DIM = 4;
+    consts.ROW = 1;
+    consts.COL = 0;
     
     return consts;
     

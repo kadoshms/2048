@@ -23,56 +23,32 @@ define([
     }
 
     /**
-     * possible moves object
-     * @type {{right: Tile.moves.right, left: Tile.moves.left}}
-     */
-    Tile.prototype.moves = {
-        right   :   function(){
-            if(this.x < consts.DIM - 1)
-            {
-                this.x = this.x+1;
-                return true;
-            }
-            return false;
-        },
-        left    :   function(){
-            if(this.x > 0)
-            {
-                this.x = this.x-1;
-                return true;
-            }
-            return false;
-        },
-        up    :   function(){
-            if(this.y > 0)
-            {
-                this.y = this.y-1;
-                return true;
-            }
-            return false;
-        },
-        down    :   function(){
-            if(this.y < consts.DIM - 1)
-            {
-                this.y = this.y+1;
-                return true;
-            }
-            return false;
-        }
-    };
-    /**
      * all possible movements
      * @type {{}}
      */
-    Tile.prototype.move = function(dir){
+    Tile.prototype.move = function(vector){
         var oldPos = {x : this.x, y : this.y};
-        var newPos = {};
+        var newPos = {x : this.x + vector.x, y : this.y + vector.y};
 
-        var result = this.moves[dir].apply(this);
+        var result = {};
 
-        newPos = result ? {x : this.x, y : this.y} : null;
+        // check if
+        if(newPos.x >= 0 && newPos.x < consts.DIM && newPos.y >= 0 && newPos.y < consts.DIM)
+        {
+            result = {oldPos:oldPos, newPos:newPos};
+        }
 
-        return {oldPos:oldPos, newPos:newPos};
+        return result;
+    }
+
+    /**
+     * set position of tile
+     * @param x
+     * @param y
+     */
+    Tile.prototype.setPosition = function(x, y){
+        this.x = x;
+        this.y = y;
     }
 
     /**

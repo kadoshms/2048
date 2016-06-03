@@ -11,8 +11,9 @@ define([
     'classes/utils',
     'classes/consts',
     'classes/tile',
+    'classes/queue',
     'text!templates/grid.mustache'
-], function(Mustache, Utils, consts, Tile, Template){
+], function(Mustache, Utils, consts, Tile, Queue, Template){
 
     /**
      * construct a new grid
@@ -24,16 +25,18 @@ define([
 
         for(var i = 0; i < consts.DIM ; i++)
         {
-            this.tiles[i] = [];
+            this.cells[i] = [];
 
             for(var j=0; j < consts.DIM; j++)
             {
-                this.tiles[i][j] = undefined;
+                this.cells[i][j] = null;
             }
         }
 
         this.addTile(1,2);
-        Utils.printMatrix(this.tiles)
+        this.addTile(2,2);
+
+        Utils.printMatrix(this.cells)
     }
 
     /**
@@ -41,53 +44,116 @@ define([
      * @param dir
      */
     Grid.prototype.move = function(dir){
+        var dirName = "right";
+
         switch(dir)
         {
-            case consts.RIGHT:
-                grid.moveAction("right");
-                break;
             case consts.LEFT:
-                grid.moveAction("left");
+                dirName = "left";
                 break;
             case consts.UP:
-                grid.moveAction("up");
+                dirName = "up";
                 break;
             case consts.DOWN:
-                grid.moveAction("down");
+                dirName = "down";
                 break;
+            default:
+                // do nothing
         }
+
+        this.moveAction(this.getMovementVector(dirName));
     }
 
     /**
-     * move action executer
+     * get movement vector
      * @param dir
+     * @returns {*}
      */
-    Grid.prototype.moveAction = function(dir){
-        // move all tiles
-        for(var row=0;row<consts.DIM;row++)
+    Grid.prototype.getMovementVector = function(dir){
+        var vectors = {
+            up      :   {x : 0 , y : -1},
+            down    :   {x : 0 , y : 1},
+            left    :   {x :-1 , y : 0 },
+            right   :   {x : 1 , y : 0}
+        };
+
+        return vectors[dir];
+    }
+
+    /**
+     * prepare a queue of tiles to move
+     * @param vector
+     * @returns {Queue}
+     */
+    Grid.prototype.getTileQueue = function(vector){
+        var queue = new Queue();
+
+        for(var i = 0; i < consts.DIM ; i++)
         {
-            for(var col = 0; col < consts.DIM; col++)
+            for(var j = 0; j < consts.DIM; j++)
             {
-                // set the direction of the movement
-                var _col = (dir == "right") ? (consts.DIM - 1) - col : col;
-                var _row = (dir == "down") ? (consts.DIM - 1) - row : row;
+                var col = (vector.x == 1) ? (consts.DIM - 1) - j : j;
+                var row = (vector.y == -1) ? (consts.DIM - 1) - i : i;
 
-                if(this.tiles[_row][_col] != undefined)
+                if(this.cells[row][col] != null){
+                    queue.enqueue(this.cells[row][col]);
+                }
+            }
+        }
+
+        return queue;
+    }
+
+    /**
+     * update tile position
+     * @param tile
+     * @param move
+     */
+    Grid.prototype.updateCell = function(tile, move){
+        this.cells[move.oldPos.y][move.oldPos.x] = null;
+        this.cells[move.newPos.y][move.newPos.x] = tile;
+    }
+
+    /**
+     * move the tiles
+     * @param vector
+     */
+    Grid.prototype.moveAction = function(vector){
+        var tileQueue = this.getTileQueue(vector);
+
+        while(!tileQueue.isEmpty())
+        {
+            var tile = tileQueue.dequeue();
+
+            var result = tile.move(vector);
+
+            // move as long as it is possible
+            while(result.newPos != null && result.newPos != undefined && this.canMoveToCell(result.newPos))
+            {
+                // move tile if actual movement accured
                 {
-                    var tile = this.tiles[_row][_col];
-                    var move = tile.move(dir);
-
-                    // if tile moved
-                    if(move.newPos != null)
+                    if(true)
                     {
-                        this.tiles[move.newPos.y][move.newPos.x] = tile;
-                        this.tiles[move.oldPos.y][move.oldPos.x] = undefined;
+                        tile.setPosition(result.newPos.x, result.newPos.y);
+                        this.updateCell(tile, result);
+
+                        // move the tile once again
+                        result = tile.move(vector);
                     }
                 }
             }
         }
 
-        Utils.printMatrix(this.tiles);
+        Utils.printMatrix(this.cells)
+    }
+
+    /**
+     * determines weather the cell is vacant
+     * @param position
+     * @returns {boolean}
+     */
+    Grid.prototype.canMoveToCell = function(position){
+        return this.cells[position.y][position.x] == null;
     }
 
     /**
@@ -96,7 +162,10 @@ define([
      * @param y
      */
     Grid.prototype.addTile = function(x, y){
-        this.tiles[y][x] = new Tile(x,y);
+        var tile = new Tile(x,y);
+        this.tiles.push(tile);
+
+        this.cells[y][x] = tile;
     }
 
     Grid.prototype.compileTiles = function(){
