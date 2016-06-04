@@ -26,7 +26,8 @@ define([
         for(var i=0;i<matrix.length;i++){
             var row = "";
             for(var j=0;j<matrix[0].length;j++){
-                row = row + matrix[i][j];
+                var display = matrix[i][j] == null ? "0" : matrix[i][j].toString();
+                row = row + "["+display+"]";
 
                 if(j != matrix[0].length - 1)
                     row = row + ",";
