@@ -33,8 +33,7 @@ define([
         var result = {};
 
         // check if
-        if(newPos.x >= 0 && newPos.x < consts.DIM && newPos.y >= 0 && newPos.y < consts.DIM)
-        {
+        if(newPos.x >= 0 && newPos.x < consts.DIM && newPos.y >= 0 && newPos.y < consts.DIM){
             result = {oldPos:oldPos, newPos:newPos};
         }
 
@@ -69,6 +68,14 @@ define([
 
     Tile.prototype.draw = function(){
         return Mustache.to_html(Template, this);
+    }
+
+    /**
+     * get string representation of tile value
+     * @returns {number}
+     */
+    Tile.prototype.toString = function(){
+        return this.value;
     }
 
     return Tile;
