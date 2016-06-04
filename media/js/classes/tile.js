@@ -78,6 +78,24 @@ define([
         return this.value;
     }
 
+
+    /**
+     * check if tiles can merge
+     * @param other
+     * @returns {boolean}
+     */
+    Tile.prototype.mergeable = function(other){
+        return this.value == other.value;
+    }
+
+    /**
+     * merge two tiles together
+     * @param other
+     */
+    Tile.prototype.mergeWith = function(other){
+        this.value = Math.pow(this.value, 2);
+    }
+
     return Tile;
 
 });

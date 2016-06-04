@@ -128,23 +128,43 @@ define([
             var result = tile.move(vector);
 
             // move as long as it is possible
-            while(result.newPos != null && result.newPos != undefined && this.canMoveToCell(result.newPos))
+            while(result.newPos != null && result.newPos != undefined)
             {
                 // move tile if actual movement accured
+                if(this.canMoveToCell(result.newPos))
                 {
-                    if(true)
-                    {
-                        tile.setPosition(result.newPos.x, result.newPos.y);
-                        this.updateCell(tile, result);
+                    tile.setPosition(result.newPos.x, result.newPos.y);
+                    this.updateCell(tile, result);
 
-                        // move the tile once again
-                        result = tile.move(vector);
+                    // move the tile once again
+                    result = tile.move(vector);
+                }
+                else
+                {
+                    var adjTile = this.cells[result.newPos.y][result.newPos.x];
+
+                    // if merge can be done
+                    if(tile.mergeable(adjTile))
+                    {
+                        adjTile.mergeWith(tile);
+                        this.emptyCell(tile.x, tile.y);
                     }
+
+                    break;
                 }
             }
         }
 
         Utils.printMatrix(this.cells)
+    }
+
+    /**
+     * empty a cell in the grid
+     * @param x
+     * @param y
+     */
+    Grid.prototype.emptyCell = function(x, y){
+        this.cells[y][x] = null;
     }
 
     /**
