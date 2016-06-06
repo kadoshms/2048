@@ -19,6 +19,8 @@ define([], function(){
     consts.DIM = 4;
     consts.ROW = 1;
     consts.COL = 0;
+
+    consts.START_TILES_NUM = 2;
     
     return consts;
     

@@ -19,6 +19,14 @@ define([
     }
 
     /**
+     * generate a maximum tile value based on max value on table
+     * @param maxValue
+     */
+    Utils.getRandomTileValue = function(maxValue){
+        return 2;
+    }
+
+    /**
      * print matrix
      * @param matrix
      */

@@ -15,8 +15,8 @@ define([
      * @param y initial y coordinate
      * @constructor
      */
-    function Tile(x, y){
-        this.value = 2;
+    function Tile(x, y, value){
+        this.value = value;
         this.x = x;
         this.y = y;
         this.movement = {};
@@ -93,7 +93,7 @@ define([
      * @param other
      */
     Tile.prototype.mergeWith = function(other){
-        this.value = Math.pow(this.value, 2);
+        this.value = this.value * 2;
     }
 
     return Tile;

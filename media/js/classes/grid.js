@@ -33,8 +33,10 @@ define([
             }
         }
 
-        this.addTile(1,2);
-        this.addTile(2,2);
+        for(var i = 0 ; i < consts.START_TILES_NUM ;i++)
+        {
+            this.generateRandomTile();
+        }
 
         Utils.printMatrix(this.cells)
     }
@@ -61,9 +63,31 @@ define([
                 // do nothing
         }
 
-        this.moveAction(this.getMovementVector(dirName));
+        var moves = this.moveAction(this.getMovementVector(dirName));
+
+        // generate a new tile if needed
+        if(moves > 0)
+        {
+            this.generateRandomTile();
+        }
+
+        Utils.printMatrix(this.cells);
     }
 
+    /**
+     * generate a random tile on grid
+     */
+    Grid.prototype.generateRandomTile = function(){
+        var position = {};
+        do{
+            position.x = Utils.getRandomInRange(0, consts.DIM-1);
+            position.y = Utils.getRandomInRange(0, consts.DIM-1);
+        }while(!this.isCellVacant(position));
+
+        this.cells[position.y][position.x] = new Tile(position.x, position.y, Utils.getRandomTileValue());
+    }
+
+    Grid.prototype.cel
     /**
      * get movement vector
      * @param dir
@@ -120,6 +144,7 @@ define([
      */
     Grid.prototype.moveAction = function(vector){
         var tileQueue = this.getTileQueue(vector);
+        var moveCount = 0;
 
         while(!tileQueue.isEmpty())
         {
@@ -131,13 +156,16 @@ define([
             while(result.newPos != null && result.newPos != undefined)
             {
                 // move tile if actual movement accured
-                if(this.canMoveToCell(result.newPos))
+                if(this.isCellVacant(result.newPos))
                 {
                     tile.setPosition(result.newPos.x, result.newPos.y);
                     this.updateCell(tile, result);
 
                     // move the tile once again
                     result = tile.move(vector);
+
+                    // increase actual move count
+                    moveCount = moveCount + 1;
                 }
                 else
                 {
@@ -155,7 +183,7 @@ define([
             }
         }
 
-        Utils.printMatrix(this.cells)
+        return moveCount;
     }
 
     /**
@@ -172,7 +200,7 @@ define([
      * @param position
      * @returns {boolean}
      */
-    Grid.prototype.canMoveToCell = function(position){
+    Grid.prototype.isCellVacant = function(position){
         return this.cells[position.y][position.x] == null;
     }
 
