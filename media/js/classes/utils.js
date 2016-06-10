@@ -60,6 +60,16 @@ define([
         else if(dir == consts.DOWN)
             return "down";
     }
+
+    /**
+     * return true if move is valid
+     * @param code
+     * @returns {boolean}
+     */
+    Utils.isValidMove = function(code){
+        return [consts.RIGHT,consts.LEFT,consts.UP,consts.DOWN].indexOf(code) != -1;
+    }
+
     return Utils;
 
 });

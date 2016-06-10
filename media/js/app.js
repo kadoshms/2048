@@ -7,15 +7,43 @@
  */
 
 define([
-], function(Sorter, Group, Ball){
+    'jquery',
+    'classes/grid',
+    'classes/consts',
+    'classes/utils',
+], function($, Grid, consts, Utils){
     /**
      * first executed method
      */
     var initialize = function(){
         self = this;
         initGame();
+        setupKeyBoardEvents();
     }
 
+
+    /**
+     * setup keyboard event listenrs
+     */
+    function setupKeyBoardEvents(){
+        var self = this;
+        window.lastPress = 0;
+
+        // Bind key-press
+        $(document).keydown(function(e){
+
+            // get current time
+            var now = (new Date()).getTime();
+
+            if(now-lastPress > consts.KEY_DELAY && Utils.isValidMove(e.keyCode))
+            {
+                // just because it looks cleaner :)
+                grid.move(e.keyCode);
+            }
+
+            window.lastPress = (new Date()).getTime();
+        });
+    }
     /**
      * initialize game stage and components
      */
