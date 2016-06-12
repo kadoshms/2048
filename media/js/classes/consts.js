@@ -21,6 +21,7 @@ define([], function(){
     consts.COL = 0;
 
     consts.START_TILES_NUM = 2;
+    consts.NEW_TILE_TIMEOUT = 300;
     
     return consts;
     

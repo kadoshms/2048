@@ -19,6 +19,7 @@ define([
         this.value = value;
         this.x = x;
         this.y = y;
+        this.merged = false;
         this.movement = {};
     }
 
@@ -35,9 +36,6 @@ define([
         // check if
         if(newPos.x >= 0 && newPos.x < consts.DIM && newPos.y >= 0 && newPos.y < consts.DIM){
             result = {oldPos:oldPos, newPos:newPos};
-
-            // update class
-            this.updatePositionClass(oldPos, newPos);
         }
 
         return result;
@@ -48,9 +46,11 @@ define([
      * @param oldPos
      * @param newPos
      */
-    Tile.prototype.updatePositionClass = function(oldPos, newPos){
-        this.graphics.removeClass("tile-pos-"+oldPos.y+"-"+oldPos.x)
-                        .addClass("tile-pos-"+newPos.y+"-"+newPos.x);
+    Tile.prototype.updatePositionClass = function(){
+        this.graphics.removeClass(function(index ,css){
+            return (css.match (/(^|\s)tile-pos-\S+/g) || []).join(' ');
+        })
+        .addClass("tile-pos-"+this.y+"-"+this.x);
     }
 
     /**
@@ -99,7 +99,7 @@ define([
      * @returns {boolean}
      */
     Tile.prototype.mergeable = function(other){
-        return this.value == other.value;
+        return this.value == other.value && !this.merged;
     }
 
     /**
@@ -107,7 +107,32 @@ define([
      * @param other
      */
     Tile.prototype.mergeWith = function(other){
+        this.merged = true;
         this.value = this.value * 2;
+        this.graphics.text(this.value);
+        other.destroy();
+    }
+
+    /**
+     * return true if tile has merged the passing move
+     * @returns {boolean}
+     */
+    Tile.prototype.isMerged = function(){
+        return this.merged;
+    }
+
+    /**
+     * destroy tile graphics
+     */
+    Tile.prototype.destroy = function(){
+        $(this.graphics).remove();
+    }
+
+    /**
+     * let the tile merge again
+     */
+    Tile.prototype.letMerge = function(){
+        this.merged = false;
     }
 
     return Tile;

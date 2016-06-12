@@ -43,6 +43,7 @@ define([
      */
     Grid.prototype.move = function(dir){
         var dirName = "right";
+        var self = this;
 
         switch(dir)
         {
@@ -64,11 +65,14 @@ define([
         // generate a new tile if needed
         if(moves > 0)
         {
-            this.generateRandomTile();
-        }
+            setTimeout(function(){
+                self.generateRandomTile();
 
-        //this.draw();
-        //Utils.printMatrix(this.cells);
+                //this.draw();
+                //Utils.printMatrix(self.cells);
+
+            }, consts.NEW_TILE_TIMEOUT);
+        }
     }
 
     /**
@@ -142,6 +146,8 @@ define([
      */
     Grid.prototype.moveAction = function(vector){
         var tileQueue = this.getTileQueue(vector);
+        var letMergeQueue = new Queue();
+
         var moveCount = 0;
 
         while(!tileQueue.isEmpty())
@@ -173,15 +179,32 @@ define([
                     if(tile.mergeable(adjTile))
                     {
                         adjTile.mergeWith(tile);
+                        letMergeQueue.enqueue(adjTile);
+
+                        // remove the tile from the array
+                        this.tiles.splice(this.tiles.indexOf(tile), 1);
                         this.emptyCell(tile.x, tile.y);
                     }
 
                     break;
                 }
             }
+
+            // update tile class
+            tile.updatePositionClass();
         }
 
+        this.letTilesMerge(letMergeQueue);
+
         return moveCount;
+    }
+
+    Grid.prototype.letTilesMerge = function(queue){
+        while(!queue.isEmpty())
+        {
+            var tile = queue.dequeue();
+            tile.letMerge();
+        }
     }
 
     /**
@@ -228,6 +251,9 @@ define([
         return Mustache.to_html(Template, this);
     }
 
+    /**
+     * add first tiles to grid
+     */
     Grid.prototype.addFirstTiles = function(){
         for(var i = 0 ; i < consts.START_TILES_NUM ;i++)
         {
