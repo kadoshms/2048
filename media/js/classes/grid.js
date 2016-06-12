@@ -7,13 +7,14 @@
 
 
 define([
+    'jquery',
     'mustache',
     'classes/utils',
     'classes/consts',
     'classes/tile',
     'classes/queue',
     'text!templates/grid.mustache'
-], function(Mustache, Utils, consts, Tile, Queue, Template){
+], function($, Mustache, Utils, consts, Tile, Queue, Template){
 
     /**
      * construct a new grid
@@ -32,14 +33,9 @@ define([
                 this.cells[i][j] = null;
             }
         }
-
-        for(var i = 0 ; i < consts.START_TILES_NUM ;i++)
-        {
-            this.generateRandomTile();
-        }
-
-        Utils.printMatrix(this.cells)
     }
+
+    Grid.prototype.el = "#grid";
 
     /**
      * move tiles to the specified direction
@@ -71,7 +67,8 @@ define([
             this.generateRandomTile();
         }
 
-        Utils.printMatrix(this.cells);
+        //this.draw();
+        //Utils.printMatrix(this.cells);
     }
 
     /**
@@ -84,7 +81,8 @@ define([
             position.y = Utils.getRandomInRange(0, consts.DIM-1);
         }while(!this.isCellVacant(position));
 
-        this.cells[position.y][position.x] = new Tile(position.x, position.y, Utils.getRandomTileValue());
+        this.addTile(position.x, position.y, Utils.getRandomTileValue());
+        //this.cells[position.y][position.x] = new Tile(position.x, position.y, );
     }
 
     Grid.prototype.cel
@@ -209,14 +207,17 @@ define([
      * @param x
      * @param y
      */
-    Grid.prototype.addTile = function(x, y){
-        var tile = new Tile(x,y);
-        this.tiles.push(tile);
+    Grid.prototype.addTile = function(x, y, value){
+        var tile = new Tile(x,y,value);
+        var self = this;
 
+        this.tiles.push(tile);
         this.cells[y][x] = tile;
+
+        $(this.el).append(tile.draw());
     }
 
-    Grid.prototype.compileTiles = function(){
+    Grid.prototype.updateGraphics = function() {
 
     }
 
@@ -224,8 +225,14 @@ define([
      * draw grid
      */
     Grid.prototype.draw = function(){
-        this.compileTiles();
         return Mustache.to_html(Template, this);
+    }
+
+    Grid.prototype.addFirstTiles = function(){
+        for(var i = 0 ; i < consts.START_TILES_NUM ;i++)
+        {
+            this.generateRandomTile();
+        }
     }
 
     return Grid;

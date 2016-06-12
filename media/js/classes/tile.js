@@ -35,9 +35,22 @@ define([
         // check if
         if(newPos.x >= 0 && newPos.x < consts.DIM && newPos.y >= 0 && newPos.y < consts.DIM){
             result = {oldPos:oldPos, newPos:newPos};
+
+            // update class
+            this.updatePositionClass(oldPos, newPos);
         }
 
         return result;
+    }
+
+    /**
+     * update css class of tile when position is updated
+     * @param oldPos
+     * @param newPos
+     */
+    Tile.prototype.updatePositionClass = function(oldPos, newPos){
+        this.graphics.removeClass("tile-pos-"+oldPos.y+"-"+oldPos.x)
+                        .addClass("tile-pos-"+newPos.y+"-"+newPos.x);
     }
 
     /**
@@ -67,7 +80,8 @@ define([
     }
 
     Tile.prototype.draw = function(){
-        return Mustache.to_html(Template, this);
+        this.graphics = $(Mustache.to_html(Template, this));
+        return this.graphics;
     }
 
     /**

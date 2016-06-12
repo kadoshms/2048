@@ -1,1 +1,9 @@
-this is grid
+<div style="width:300px;position:relative;margin:auto;" id="grid">
+    {{#cells}}
+        {{#.}}<div style="width:65px;height:65px;border:1px solid red;float:left"></div>{{/.}}
+    {{/cells}}
+    {{#tiles}}
+        {{x}}
+    {{/tiles}}
+
+</div>
