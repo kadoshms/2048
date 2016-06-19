@@ -2,3 +2,5 @@ media/.sass-cache/
 .idea
 media/stylesheets/*
 media/js/vendor
+*.css
+*.css.map
