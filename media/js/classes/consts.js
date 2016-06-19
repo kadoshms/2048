@@ -7,7 +7,7 @@ define([], function(){
     
     var consts = {};
     
-    consts.KEY_DELAY = 100;
+    consts.KEY_DELAY = 200;
 
     // keyboard codes
     consts.RIGHT = 39;
@@ -21,7 +21,7 @@ define([], function(){
     consts.COL = 0;
 
     consts.START_TILES_NUM = 2;
-    consts.NEW_TILE_TIMEOUT = 300;
+    consts.NEW_TILE_TIMEOUT = 400;
     
     return consts;
     
