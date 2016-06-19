@@ -38,7 +38,7 @@ define([
             if(now-lastPress > consts.KEY_DELAY && Utils.isValidMove(e.keyCode))
             {
                 // just because it looks cleaner :)
-                grid.move(e.keyCode);
+                grid.move(e.keyCode, true);
             }
 
             window.lastPress = (new Date()).getTime();
@@ -48,7 +48,12 @@ define([
      * initialize game stage and components
      */
     function initGame(){
-        
+       this.grid = new Grid();
+
+        // draw grid
+        $('#wrapper').html(this.grid.draw());
+
+        this.grid.addFirstTiles();
     }
 
     return {
