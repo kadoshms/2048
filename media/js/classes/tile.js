@@ -81,6 +81,12 @@ define([
 
     Tile.prototype.draw = function(){
         this.graphics = $(Mustache.to_html(Template, this));
+
+        // clean merge animation
+        this.graphics.bind('oanimationend animationend webkitAnimationEnd', function() {
+            $(this).removeClass('tile-merge');
+        });
+
         return this.graphics;
     }
 
@@ -99,17 +105,27 @@ define([
      * @returns {boolean}
      */
     Tile.prototype.mergeable = function(other){
-        return this.value == other.value && !this.merged;
+        return this.value == other.value && !this.merged && !other.isMerged();
     }
-
+    
     /**
      * merge two tiles together
      * @param other
+     * @param dir of movement
      */
-    Tile.prototype.mergeWith = function(other){
-        this.merged = true;
+    Tile.prototype.mergeWith = function(other, dir){
+        var prev = this.value;
         this.value = this.value * 2;
-        this.graphics.text(this.value);
+        this.merged = true;
+        // first discover what we destroy - I have no better name...
+
+        this.merged = true;
+        this.graphics
+            .removeClass('tile-color-'+prev)
+            .addClass('tile-color-'+this.value)
+            .addClass('tile-merge')
+            .find('.tile-text').text(this.value);
+
         other.destroy();
     }
 
@@ -119,6 +135,13 @@ define([
      */
     Tile.prototype.isMerged = function(){
         return this.merged;
+    }
+
+    /**
+     * mar tiles as merged
+     */
+    Tile.prototype.markMerged = function(){
+        this.merged = true;
     }
 
     /**

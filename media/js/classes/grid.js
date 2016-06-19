@@ -41,7 +41,7 @@ define([
      * move tiles to the specified direction
      * @param dir
      */
-    Grid.prototype.move = function(dir){
+    Grid.prototype.move = function(dir, mergeAllowed){
         var dirName = "right";
         var self = this;
 
@@ -60,7 +60,8 @@ define([
                 // do nothing
         }
 
-        var moves = this.moveAction(this.getMovementVector(dirName));
+
+        var moves = this.moveAction(dirName, dir, mergeAllowed);
 
         // generate a new tile if needed
         if(moves > 0)
@@ -69,7 +70,8 @@ define([
                 self.generateRandomTile();
 
                 //this.draw();
-                //Utils.printMatrix(self.cells);
+                //console.clear();
+                //.printMatrix(self.cells);
 
             }, consts.NEW_TILE_TIMEOUT);
         }
@@ -119,7 +121,7 @@ define([
             for(var j = 0; j < consts.DIM; j++)
             {
                 var col = (vector.x == 1) ? (consts.DIM - 1) - j : j;
-                var row = (vector.y == -1) ? (consts.DIM - 1) - i : i;
+                var row = (vector.y == 1) ? (consts.DIM - 1) - i : i;
 
                 if(this.cells[row][col] != null){
                     queue.enqueue(this.cells[row][col]);
@@ -142,18 +144,21 @@ define([
 
     /**
      * move the tiles
-     * @param vector
+     * @param dirName
+     * @param dir
+     * @param mergeAllowed
      */
-    Grid.prototype.moveAction = function(vector){
+    Grid.prototype.moveAction = function(dirName, dir, mergeAllowed){
+        var vector = this.getMovementVector(dirName);
         var tileQueue = this.getTileQueue(vector);
         var letMergeQueue = new Queue();
+        var mergeQueue = new Queue();
 
         var moveCount = 0;
 
         while(!tileQueue.isEmpty())
         {
             var tile = tileQueue.dequeue();
-
             var result = tile.move(vector);
 
             // move as long as it is possible
@@ -174,16 +179,15 @@ define([
                 else
                 {
                     var adjTile = this.cells[result.newPos.y][result.newPos.x];
-
                     // if merge can be done
-                    if(tile.mergeable(adjTile))
+
+                    if(adjTile.mergeable(tile) && mergeAllowed)
                     {
-                        adjTile.mergeWith(tile);
+                        mergeQueue.enqueue({keep : adjTile, destroy : tile, dir : dir});
                         letMergeQueue.enqueue(adjTile);
 
-                        // remove the tile from the array
-                        this.tiles.splice(this.tiles.indexOf(tile), 1);
-                        this.emptyCell(tile.x, tile.y);
+                        // mark as merged to avoid double merges
+                        this.merge(adjTile, tile);
                     }
 
                     break;
@@ -194,11 +198,53 @@ define([
             tile.updatePositionClass();
         }
 
+        // release
         this.letTilesMerge(letMergeQueue);
 
         return moveCount;
     }
 
+    Grid.prototype.mergeAll = function(queue) {
+        var dir, keep, destroy;
+
+        while(!queue.isEmpty())
+        {
+            var current = queue.dequeue();
+            keep = current.keep;
+            destroy = current.destroy;
+            dir = current.dir;
+
+            this.merge(keep, destroy , dir);
+        }
+
+        if(dir != undefined)
+        {
+            this.move(dir, false);
+        }
+
+        //console.clear();
+        Utils.printMatrix(this.cells);
+    }
+
+    /**
+     * merge two adjacent tiles
+     * @param tile1
+     * @param tile2
+     * @param dir
+     */
+    Grid.prototype.merge = function(tile1, tile2, dir){
+        // remove the tile from the array
+        tile1.mergeWith(tile2, dir);
+
+        this.tiles.splice(this.tiles.indexOf(tile2), 1);
+
+        this.emptyCell(tile2.x, tile2.y);
+    }
+
+    /**
+     * let all tiles merge again
+     * @param queue
+     */
     Grid.prototype.letTilesMerge = function(queue){
         while(!queue.isEmpty())
         {
@@ -238,10 +284,6 @@ define([
         this.cells[y][x] = tile;
 
         $(this.el).append(tile.draw());
-    }
-
-    Grid.prototype.updateGraphics = function() {
-
     }
 
     /**
