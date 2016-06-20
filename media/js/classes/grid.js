@@ -69,10 +69,6 @@ define([
             setTimeout(function(){
                 self.generateRandomTile();
 
-                //this.draw();
-                //console.clear();
-                //.printMatrix(self.cells);
-
             }, consts.NEW_TILE_TIMEOUT);
         }
     }
@@ -172,9 +168,6 @@ define([
 
                     // move the tile once again
                     result = tile.move(vector);
-
-                    // increase actual move count
-                    moveCount = moveCount + 1;
                 }
                 else
                 {
@@ -192,6 +185,9 @@ define([
 
                     break;
                 }
+
+                // increase actual move count
+                moveCount = moveCount + 1;
             }
 
             // update tile class
